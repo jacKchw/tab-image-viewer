@@ -6,7 +6,6 @@
   "action": {
     "default_icon": "hello_extensions.png"
   },
-  "permissions": ["activeTab"],
   "background": {
     "service_worker": "background.js",
     "persistent": false
@@ -14,7 +13,7 @@
   "content_scripts": [
     {
       "js": ["scripts/content.js"],
-      "matches": ["https://*/*"]
+      "matches": ["https://x.com/*", "https://twitter.com/*"]
     }
   ]
 }

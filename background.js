@@ -1,22 +1,25 @@
 chrome.runtime.onInstalled.addListener(() => {
   chrome.action.setBadgeText({
-    text: "OFF",
+    text: "0",
   });
 });
 
-chrome.action.onClicked.addListener(async (tab) => {
-  // Retrieve the action badge to check if the extension is 'ON' or 'OFF'
-  const prevState = await chrome.action.getBadgeText({ tabId: tab.id });
-  // Next state will always be the opposite
-  const nextState = prevState === "ON" ? "OFF" : "ON";
+let tabs = [];
 
+chrome.action.onClicked.addListener(async (tab) => {
   // Set the action badge to the next state
   await chrome.action.setBadgeText({
-    tabId: tab.id,
-    text: nextState,
+    text: (tabs.length + 1).toString(),
   });
-  chrome.tabs.create({
+  const extensionTab = await chrome.tabs.create({
     url: chrome.runtime.getURL("index.html"),
-    // windowId: 2,
+  });
+  tabs.push(extensionTab.id);
+});
+
+chrome.tabs.onRemoved.addListener((tabId) => {
+  tabs = tabs.filter((id) => id !== tabId);
+  chrome.action.setBadgeText({
+    text: tabs.length.toString(),
   });
 });
