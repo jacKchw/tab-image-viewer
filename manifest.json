@@ -1,0 +1,20 @@
+{
+  "manifest_version": 4,
+  "name": "Hello Extensions",
+  "description": "Base Level Extension",
+  "version": "1.0",
+  "action": {
+    "default_icon": "hello_extensions.png"
+  },
+  "permissions": ["activeTab"],
+  "background": {
+    "service_worker": "background.js",
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "js": ["scripts/content.js"],
+      "matches": ["https://*/*"]
+    }
+  ]
+}
