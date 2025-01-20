@@ -1,25 +1,41 @@
 let currentSrc = "";
 
-const fetchImage = async (url) => {
-  let originalImageURL = new URL(url);
-  if (originalImageURL.host === "pbs.twimg.com") {
-    originalImageURL = new URL(
-      originalImageURL.origin +
-        originalImageURL.pathname +
-        "?format=jpg&name=large"
+const parseTwitterURL = (imageURL) => {
+  if (imageURL.host === "pbs.twimg.com") {
+    return new URL(
+      imageURL.origin + imageURL.pathname + "?format=jpg&name=large"
     );
   }
+  return imageURL;
+};
 
-  const response = await fetch(originalImageURL);
+const fetchImage = async (url) => {
+  const response = await fetch(url, {
+    referrer: url.origin,
+  });
   return response.blob();
 };
 
 document.addEventListener("mouseover", async (event) => {
+  // get img src
   let target = event.target.closest("img");
   if (target && currentSrc !== target.currentSrc) {
     currentSrc = target.currentSrc;
+    let imageURL = new URL(currentSrc);
 
-    const blob = await fetchImage(currentSrc);
+    // get original image url in pixiv
+    if (imageURL.host === "i.pximg.net") {
+      const linkElement = target.closest("a");
+      const href = linkElement.href;
+      if (href !== undefined && href.search(/(png)|(jpg)|(jpeg)/) !== -1) {
+        imageURL = new URL(linkElement.href);
+      }
+    }
+
+    // get original image url in twitter
+    imageURL = parseTwitterURL(imageURL);
+
+    const blob = await fetchImage(imageURL);
     const blobURL = URL.createObjectURL(blob);
 
     chrome.runtime.sendMessage({
