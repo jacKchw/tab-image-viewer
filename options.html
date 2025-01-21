@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Global Context Search</title>
+    <style>
+      body {
+        min-width: 300px;
+        font-size: 15px;
+      }
+
+      input {
+        margin: 5px;
+        outline: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h3>
+        Use high resulution image (may reduce performance):
+    </h3>
+    <div>
+        <label name="enhanceTwitter">Twitter:</label>
+        <input id="enhanceTwitter" type="checkbox" name="enhanceTwitter"/>
+    </div>
+    <div>
+        <label name="enhanceYoutube">Youtube:</label>
+        <input id="enhanceYoutube" name="enhanceYoutube" type="checkbox"/>
+    </div>
+    <div>
+        <label name="enhancePixiv">Pixiv:</label>
+        <input id="enhancePixiv" name="enhancePixiv" type="checkbox"/>
+    </div>
+    <button id="saveBtn">Save</button>
+    <span id="status"></span>
+  </body>
+  <script src="optionsDefault.js"></script>
+  <script src="scripts/options.js"></script>
+</html>

@@ -1,19 +1,23 @@
 {
-  "manifest_version": 4,
+  "manifest_version": 3,
   "name": "Hello Extensions",
   "description": "Base Level Extension",
   "version": "1.0",
   "action": {
     "default_icon": "hello_extensions.png"
   },
+  "options_page": "options.html",
   "background": {
     "service_worker": "background.js",
-    "persistent": false
+    "type": "module"
   },
+  "permissions": ["storage"],
+  "host_permissions": ["https://*/*"],
   "content_scripts": [
     {
-      "js": ["scripts/content.js"],
-      "matches": ["https://x.com/*", "https://twitter.com/*"]
+      "js": ["optionsDefault.js", "scripts/content.js"],
+      "matches": ["https://*/*"],
+      "type": "module"
     }
   ]
 }
