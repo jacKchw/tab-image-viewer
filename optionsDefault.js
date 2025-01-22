@@ -2,6 +2,7 @@ const defaultOptioins = {
   twitter: true,
   youtube: true,
   pixiv: false,
+  pinterest: true,
 };
 
 const enhanceSites = {
@@ -19,5 +20,10 @@ const enhanceSites = {
     id: "enhancePixiv",
     host: "www.pixiv.net",
     imageHost: "i.pximg.net",
+  },
+  pinterest: {
+    id: "enhancePinterest",
+    host: ".pinterest.com",
+    imageHost: "i.pinimg.com",
   },
 };

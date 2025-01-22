@@ -5,8 +5,9 @@ const host = document.location.host;
   const options = await chrome.storage.sync.get(defaultOptioins);
 
   for (const [key, site] of Object.entries(enhanceSites)) {
-    if (host === site.host && options[key]) {
+    if (host.search(site.host) !== -1 && options[key]) {
       enhanceSiteKey = key;
+      return;
     }
   }
 })();
@@ -18,7 +19,11 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
       enhanceSiteKey = "";
       return;
     }
-    if (enhanceSiteKey === "" && host === enhanceSites[key].host && newValue) {
+    if (
+      enhanceSiteKey === "" &&
+      host.search(enhanceSites[key].host) &&
+      newValue
+    ) {
       enhanceSiteKey = key;
     }
   }
@@ -64,6 +69,12 @@ const getOriginalImage = (imageSrc, target) => {
     // get original image url in youtube
     ytId = imageURL.pathname.split("/")[2];
     return new URL(`https://img.youtube.com/vi/${ytId}/maxresdefault.jpg`);
+  } else if (
+    enhanceSiteKey === "pinterest" &&
+    enhanceSites[enhanceSiteKey].imageHost === imageURL.host
+  ) {
+    // get original image url in pinterest
+    return new URL(imageURL.origin + imageURL.pathname.replace(/236x/, "736x"));
   }
 
   return imageURL;
@@ -78,7 +89,6 @@ document.addEventListener("mouseover", async (event) => {
     currentSrc = target.currentSrc;
 
     const imageURL = getOriginalImage(currentSrc, target);
-    console.log(imageURL);
     const blob = await fetchImage(imageURL);
     const blobURL = URL.createObjectURL(blob);
 
