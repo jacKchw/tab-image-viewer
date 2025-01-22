@@ -1,17 +1,31 @@
 let currentSrc = "";
 
-let enhanceImageHost = "";
+let enhanceSiteKey = "";
 
+// load options
 const host = document.location.host;
 (async () => {
-  const enhanceOptions = await chrome.storage.sync.get(defaultEnhanceOptioins);
+  const options = await chrome.storage.sync.get(defaultOptioins);
 
-  for (const enhanceURL of enhanceURLs) {
-    if (host === enhanceURL.host && enhanceOptions[enhanceURL.id]) {
-      enhanceImageHost = enhanceURL.imageHost;
+  for (const [key, site] of Object.entries(enhanceSites)) {
+    if (host === site.host && options[key]) {
+      enhanceSiteKey = key;
     }
   }
 })();
+
+// react to option update
+chrome.storage.onChanged.addListener((changes, namespace) => {
+  for (const [key, { newValue }] of Object.entries(changes)) {
+    if (key === enhanceSiteKey && !newValue) {
+      enhanceSiteKey = "";
+      return;
+    }
+    if (enhanceSiteKey === "" && host === enhanceSites[key].host && newValue) {
+      enhanceSiteKey = key;
+    }
+  }
+});
 
 const fetchImage = async (url) => {
   const response = await fetch(url, {
@@ -20,16 +34,17 @@ const fetchImage = async (url) => {
   return response.blob();
 };
 
+// edit url to get larger image
 const getOriginalImage = (imageSrc, target) => {
   let imageURL = new URL(imageSrc);
 
-  if (enhanceImageHost === "") {
+  if (enhanceSiteKey === "") {
     return imageURL;
   }
 
   if (
-    enhanceImageHost === imageURL.host &&
-    enhanceImageHost === "i.pximg.net"
+    enhanceSiteKey === "pixiv" &&
+    enhanceSites[enhanceSiteKey].imageHost === imageURL.host
   ) {
     // get original image url in pixiv
     const linkElement = target.closest("a");
@@ -38,16 +53,16 @@ const getOriginalImage = (imageSrc, target) => {
       return new URL(linkElement.href);
     }
   } else if (
-    enhanceImageHost === imageURL.host &&
-    enhanceImageHost === "pbs.twimg.com"
+    enhanceSiteKey === "twitter" &&
+    enhanceSites[enhanceSiteKey].imageHost === imageURL.host
   ) {
     // get original image url in twitter
     return new URL(
       imageURL.origin + imageURL.pathname + "?format=jpg&name=large"
     );
   } else if (
-    enhanceImageHost === imageURL.host &&
-    enhanceImageHost === "i.ytimg.com"
+    enhanceSiteKey === "youtube" &&
+    enhanceSites[enhanceSiteKey].imageHost === imageURL.host
   ) {
     // get original image url in youtube
     ytId = imageURL.pathname.split("/")[2];
@@ -57,6 +72,7 @@ const getOriginalImage = (imageSrc, target) => {
   return imageURL;
 };
 
+// when mouse hover on an img, fetch the image and send it to extension page
 document.addEventListener("mouseover", async (event) => {
   // get img src
   let target = event.target.closest("img");
@@ -72,17 +88,5 @@ document.addEventListener("mouseover", async (event) => {
       type: "updateImgUrl",
       value: blobURL,
     });
-  }
-});
-
-chrome.storage.onChanged.addListener((changes, namespace) => {
-  for (const enhanceURL of enhanceURLs) {
-    if (host === enhanceURL.host && changes[enhanceURL.id] !== null) {
-      if (changes[enhanceURL.id].newValue) {
-        enhanceImageHost = enhanceURL.imageHost;
-      } else {
-        enhanceImageHost = "";
-      }
-    }
   }
 });

@@ -1,10 +1,9 @@
 const saveOptions = () => {
   const options = {};
-  for (const id in defaultEnhanceOptioins) {
-    const input = document.getElementById(id);
-    options[id] = input.checked;
+  for (const [key, value] of Object.entries(enhanceSites)) {
+    const input = document.getElementById(value.id);
+    options[key] = input.checked;
   }
-  console.log(options);
   chrome.storage.sync.set(options, () => {
     // Update status to let user know options were saved.
     const status = document.getElementById("status");
@@ -18,9 +17,9 @@ const saveOptions = () => {
 // Restores select box and checkbox state using the preferences
 // stored in chrome.storage.
 const restoreOptions = async () => {
-  const items = await chrome.storage.sync.get(defaultEnhanceOptioins);
-  for (const id in defaultEnhanceOptioins) {
-    document.getElementById(id).checked = items[id];
+  const items = await chrome.storage.sync.get(defaultOptioins);
+  for (const [key, value] of Object.entries(enhanceSites)) {
+    document.getElementById(value.id).checked = items[key];
   }
 };
 
