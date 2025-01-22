@@ -2,16 +2,15 @@ let currentSrc = "";
 
 let enhanceImageHost = "";
 
+const host = document.location.host;
 (async () => {
   const enhanceOptions = await chrome.storage.sync.get(defaultEnhanceOptioins);
-  const host = document.location.host;
 
   for (const enhanceURL of enhanceURLs) {
     if (host === enhanceURL.host && enhanceOptions[enhanceURL.id]) {
       enhanceImageHost = enhanceURL.imageHost;
     }
   }
-  console.log(enhanceImageHost);
 })();
 
 const fetchImage = async (url) => {
@@ -28,33 +27,29 @@ const getOriginalImage = (imageSrc, target) => {
     return imageURL;
   }
 
-  // get original image url in pixiv
   if (
     enhanceImageHost === imageURL.host &&
     enhanceImageHost === "i.pximg.net"
   ) {
+    // get original image url in pixiv
     const linkElement = target.closest("a");
     const href = linkElement.href;
     if (href !== undefined && href.search(/(png)|(jpg)|(jpeg)/) !== -1) {
-      imageURL = new URL(linkElement.href);
+      return new URL(linkElement.href);
     }
-  }
-
-  // get original image url in twitter
-  if (
+  } else if (
     enhanceImageHost === imageURL.host &&
     enhanceImageHost === "pbs.twimg.com"
   ) {
+    // get original image url in twitter
     return new URL(
       imageURL.origin + imageURL.pathname + "?format=jpg&name=large"
     );
-  }
-
-  // get original image url in youtube
-  if (
+  } else if (
     enhanceImageHost === imageURL.host &&
     enhanceImageHost === "i.ytimg.com"
   ) {
+    // get original image url in youtube
     ytId = imageURL.pathname.split("/")[2];
     return new URL(`https://img.youtube.com/vi/${ytId}/maxresdefault.jpg`);
   }
@@ -77,5 +72,17 @@ document.addEventListener("mouseover", async (event) => {
       type: "updateImgUrl",
       value: blobURL,
     });
+  }
+});
+
+chrome.storage.onChanged.addListener((changes, namespace) => {
+  for (const enhanceURL of enhanceURLs) {
+    if (host === enhanceURL.host && changes[enhanceURL.id] !== null) {
+      if (changes[enhanceURL.id].newValue) {
+        enhanceImageHost = enhanceURL.imageHost;
+      } else {
+        enhanceImageHost = "";
+      }
+    }
   }
 });
