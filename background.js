@@ -11,7 +11,7 @@ chrome.action.onClicked.addListener(async (tab) => {
   await chrome.action.setBadgeText({
     text: (tabs.length + 1).toString(),
   });
-  const extensionTab = await chrome.tabs.create({
+  const extensionTab = await chrome.windows.create({
     url: chrome.runtime.getURL("index.html"),
   });
   tabs.push(extensionTab.id);
