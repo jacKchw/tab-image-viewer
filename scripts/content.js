@@ -1,8 +1,5 @@
-let currentSrc = "";
-
-let enhanceSiteKey = "";
-
 // load options
+let enhanceSiteKey = "";
 const host = document.location.host;
 (async () => {
   const options = await chrome.storage.sync.get(defaultOptioins);
@@ -73,6 +70,7 @@ const getOriginalImage = (imageSrc, target) => {
 };
 
 // when mouse hover on an img, fetch the image and send it to extension page
+let currentSrc = "";
 document.addEventListener("mouseover", async (event) => {
   // get img src
   let target = event.target.closest("img");
