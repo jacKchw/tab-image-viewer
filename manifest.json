@@ -6,6 +6,7 @@
   "action": {
     "default_icon": "hello_extensions.png"
   },
+  "icons": { "16": "hello_extensions.png" },
   "options_page": "options.html",
   "background": {
     "service_worker": "background.js",
