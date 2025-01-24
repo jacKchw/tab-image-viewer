@@ -1,12 +1,15 @@
 {
   "manifest_version": 3,
-  "name": "Hello Extensions",
-  "description": "Base Level Extension",
+  "name": "Tab Image Viewer",
+  "description": "use sperate tab to view image",
   "version": "1.0",
   "action": {
-    "default_icon": "hello_extensions.png"
+    "default_icon": "icon-16.png"
   },
-  "icons": { "16": "hello_extensions.png" },
+  "icons": {
+    "16": "icon-16.png",
+    "48": "icon-48.png"
+  },
   "options_page": "options.html",
   "background": {
     "service_worker": "background.js",
