@@ -4,11 +4,11 @@
   "description": "use sperate tab to view image",
   "version": "1.0",
   "action": {
-    "default_icon": "icon-16.png"
+    "default_icon": "icons/icon-16.png"
   },
   "icons": {
-    "16": "icon-16.png",
-    "48": "icon-48.png"
+    "16": "icons/icon-16.png",
+    "48": "icons/icon-48.png"
   },
   "options_page": "options.html",
   "background": {
